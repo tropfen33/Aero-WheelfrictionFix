@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8.5",
+  "package": "com.Tropfen_33.aerowheelfrictionfix.mixin",
+  "refmap": "aerotweaks.refmap.json",
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+    "WheelMountFrictionMixin"
+  ],
+  "client": [],
+  "server": []
+}

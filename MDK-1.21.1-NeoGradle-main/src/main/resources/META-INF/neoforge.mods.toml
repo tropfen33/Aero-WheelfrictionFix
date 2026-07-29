@@ -1,0 +1,37 @@
+# This is an example neoforge.mods.toml file. It contains the data relating to the loading mods.
+# There are several mandatory fields (#mandatory), and many more that are optional (#optional).
+# The overall format is standard TOML format, v0.5.0.
+
+modLoader="javafml" #mandatory
+loaderVersion="${loader_version_range}" #mandatory
+license="${mod_license}"
+
+[[mods]] #mandatory
+modId="aerotweaks" #mandatory
+version="${mod_version}" #mandatory
+displayName="Aero Wheels Friction Fix"
+
+# Your name is officially credited right here!
+authors="Lukas Winkler"
+
+description='''
+A quick tweak that reduces the forward rolling resistance on Create Aeronautics wheels.
+'''
+
+[[mixins]]
+config="aerotweaks.mixins.json"
+
+# Dependency rules updated to use your actual mod ID
+[[dependencies.aerotweaks]]
+modId="neoforge"
+type="required"
+versionRange="[${neo_version},)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.aerotweaks]]
+modId="minecraft"
+type="required"
+versionRange="${minecraft_version_range}"
+ordering="NONE"
+side="BOTH"
