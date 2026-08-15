@@ -32,27 +32,17 @@ public abstract class WheelMountFrictionMixin {
             int brakeSignal = be.getLevel().getSignal(be.getBlockPos().above(), Direction.UP);
 
             if (brakeSignal == 0) {
-                CompoundTag nbt = be.saveWithoutMetadata(be.getLevel().registryAccess());
-                String nbtStr = nbt.toString();
+                // Uses the single config fallback value (default 1.0)
+                double multiplier = AeroTweaksConfig.DEFAULT_FRICTION.get();
 
-                double multiplier = AeroTweaksConfig.ROLLING_FRICTION_MULTIPLIER.get(); // Fallback
-
-                if (nbtStr.contains("monstrous_tire")) {
-                    multiplier = AeroTweaksConfig.MONSTROUS_TIRE_MULTIPLIER.get();
-                } else if (nbtStr.contains("large_tire")) {
-                    multiplier = AeroTweaksConfig.LARGE_TIRE_MULTIPLIER.get();
-                } else if (nbtStr.contains("small_tire")) {
-                    multiplier = AeroTweaksConfig.SMALL_TIRE_MULTIPLIER.get();
-                } else if (nbtStr.contains("tire")) {
-                    multiplier = AeroTweaksConfig.TIRE_MULTIPLIER.get();
-                } else {
-                    multiplier = AeroTweaksConfig.WHEEL_MOUNT_MULTIPLIER.get();
+                CompoundTag persistentData = be.getPersistentData();
+                if (persistentData.contains("CustomFriction")) {
+                    multiplier = persistentData.getDouble("CustomFriction");
                 }
 
                 if (be.getBlockState().hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
                     Direction facing = be.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
                     
-                    // 1. Corrected 90-degree vector orientation
                     double rawX = facing.getStepX();
                     double rawZ = facing.getStepZ();
                     double correctedX = -rawZ;
@@ -60,24 +50,19 @@ public abstract class WheelMountFrictionMixin {
 
                     Vector3d forwardDir = new Vector3d(correctedX, facing.getStepY(), correctedZ);
 
-                    // 2. Rotate into world space using the vehicle's rigid body rotation
                     Quaterniond rotation = getBodyRotation(rigidBody);
                     if (rotation != null) {
                         forwardDir.rotate(rotation);
                     }
                     forwardDir.normalize();
 
-                    // 3. Isolate forward force via dot product projection
                     double forwardMagnitude = this.queuedForce.dot(forwardDir);
                     Vector3d forwardForce = new Vector3d(forwardDir).mul(forwardMagnitude);
 
-                    // 4. Keep sideways grip and vertical suspension completely untouched
                     Vector3d otherForces = new Vector3d(this.queuedForce).sub(forwardForce);
 
-                    // 5. Apply the config multiplier ONLY to forward rolling resistance
                     forwardForce.mul(multiplier);
 
-                    // 6. Recombine forces back into queuedForce
                     this.queuedForce.set(otherForces).add(forwardForce);
                 }
             }
