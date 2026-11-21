@@ -5,11 +5,13 @@
 modLoader="javafml" #mandatory
 loaderVersion="${loader_version_range}" #mandatory
 license="${mod_license}"
+issueTrackerURL = "https://github.com/tropfen33/Aero-WheelfrictionFix/issues"
 
 [[mods]] #mandatory
 modId="aerotweaks" #mandatory
 version="${mod_version}" #mandatory
 displayName="Aero Wheels Friction Fix"
+logoFile = "Aero-Wheeldrag-Fix.png"
 
 # Your name is officially credited right here!
 authors="Lukas Winkler"
